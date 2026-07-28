@@ -39,7 +39,7 @@
             -webkit-text-stroke: 3px #000;
         }
 
-        /* ---------- Card grid ---------- */
+        
         #cardContainer {
             position: fixed;
             bottom: 6%;
@@ -157,15 +157,14 @@
             opacity: 0.45;
         }
 
-        #gimg{
-            position: fixed;
-            top: 34%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 28%;
-            height: auto;
-            z-index: 3;
-        }
+        #gimg {
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 28%;
+    height: auto;
+    z-index: 3;
+}
     </style>
 </head>
 <body>
@@ -176,6 +175,14 @@
     <div id="cardContainer"></div>
 
     <script>
+        function positionGimg() {
+    const cardContainer = document.getElementById('cardContainer');
+    const gimg = document.getElementById('gimg');
+    const containerTop = cardContainer.getBoundingClientRect().top;
+    const viewportHeight = window.innerHeight;
+    const bottomOffset = viewportHeight - containerTop;
+    gimg.style.bottom = bottomOffset + 'px';
+}
         function artistNames(song) {
             return song.artists.map(a => a.name).join(', ');
         }
@@ -231,11 +238,14 @@
         }
 
         function renderOptions(data) {
-            const container = document.getElementById('cardContainer');
-            container.innerHTML = '';
-            const allSongs = shuffle([data.correct, ...data.wrongOptions]);
-            allSongs.forEach(song => container.appendChild(createCard(song, data.correct.id)));
-        }
+    const container = document.getElementById('cardContainer');
+    container.innerHTML = '';
+    const allSongs = shuffle([data.correct, ...data.wrongOptions]);
+    allSongs.forEach(song => container.appendChild(createCard(song, data.correct.id)));
+    positionGimg();
+}
+
+        window.addEventListener('resize', positionGimg);
 
         const stored = sessionStorage.getItem('songOptions');
         if (stored) {
