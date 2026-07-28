@@ -110,7 +110,7 @@
 
     async function goToGuessScreen() {
         const minWait = new Promise(resolve => setTimeout(resolve, 12000));
-        const fetchOptions = fetch('http://127.0.0.1:3000/api/get-song-options').then(res => res.json());
+        const fetchOptions = fetch('https://spotify-backend-dxnp.onrender.com/api/get-song-options').then(res => res.json());
 
         try {
             const [, songData] = await Promise.all([minWait, fetchOptions]);

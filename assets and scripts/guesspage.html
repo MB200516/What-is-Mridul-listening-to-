@@ -241,7 +241,7 @@
         if (stored) {
             renderOptions(JSON.parse(stored));
         } else {
-            fetch('http://127.0.0.1:3000/api/get-song-options')
+            fetch('https://spotify-backend-dxnp.onrender.com/api/get-song-options')
                 .then(res => res.json())
                 .then(renderOptions)
                 .catch(err => console.error('Failed to load song options:', err));
