@@ -41,25 +41,22 @@
             border: 5px solid #000;
        }
        #loadingtext {
-            font-family: 'Pixelify Sans', sans-serif;
-            position: fixed;
-            top: 18%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 2.7rem;
-            color: #000;
-            z-index: 2;
-            white-space: nowrap;
-            overflow: hidden;
-            border-right: 3px solid #fff;
-            width: 0;
-            animation: typewriter 4s steps(40) 1s 1 normal both,
-               blinkTextCursor 500ms steps(40) infinite normal;
+    font-family: 'Pixelify Sans', sans-serif;
+    position: fixed;
+    top: 18%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: clamp(1rem, 2.8vw, 2.7rem);
+    color: #000;
+    z-index: 2;
+    white-space: nowrap;
+    overflow: hidden;
+    border-right: 3px solid #fff;
+    width: 0;
+    max-width: 95vw;
+    transition: width 4s steps(40, end) 1s;
+    animation: blinkTextCursor 500ms steps(2) infinite normal;
 }
-        @keyframes typewriter {
-        from { width: 0; }
-        to { width: 70%; }
-        }
 
         @keyframes blinkTextCursor {
         from { border-right-color: rgba(255,255,255,0.75); }
@@ -95,6 +92,14 @@
     <audio id="loadaudio" src="loadscreensound.mp3"  loop></audio>
     
     <script>
+    const loadingtext = document.getElementById('loadingtext');
+    document.fonts.ready.then(() => {
+        requestAnimationFrame(() => {
+            const fullWidth = loadingtext.scrollWidth;
+            loadingtext.style.width = fullWidth + 'px';
+        });
+    });
+
     const audio = document.getElementById('loadaudio');
 
     audio.play().catch(() => {

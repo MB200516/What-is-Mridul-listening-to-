@@ -35,18 +35,10 @@
             overflow: hidden;
             border-right: 3px solid #fff;
             width: 0;
-            animation: typewriter 4s steps(40) 1s 1 normal both,
-               blinkTextCursor 500ms steps(40) infinite normal;
+            max-width: 95vw;
+            transition: width 4s steps(40, end) 1s;
+            animation: blinkTextCursor 500ms steps(2) infinite normal;
 }
-        @keyframes typewriter {
-        from { width: 0; }
-        to { width: 47%; }
-        }
-         @keyframes typewriterson {
-        from { width: 0; }
-        to { width: 21%; }
-        }
-
 
         @keyframes blinkTextCursor {
         from { border-right-color: rgba(255,255,255,0.75); }
@@ -65,8 +57,9 @@
             overflow: hidden;
             border-right: 3px solid #fff;
             width: 0;
-            animation: typewriterson 2s steps(40) 5s 1 normal both,
-               blinkTextCursor 500ms steps(40) infinite normal;
+            max-width: 95vw;
+            transition: width 2s steps(40, end) 5s;
+            animation: blinkTextCursor 500ms steps(2) infinite normal;
        }
        #meme1 {
             position: fixed;
@@ -127,6 +120,16 @@
     </div>
 
     <script>
+    const textEl = document.getElementById('text');
+    const coffeeEl = document.getElementById('coffee');
+
+    document.fonts.ready.then(() => {
+        requestAnimationFrame(() => {
+            textEl.style.width = textEl.scrollWidth + 'px';
+            coffeeEl.style.width = coffeeEl.scrollWidth + 'px';
+        });
+    });
+
     const audio = document.getElementById('congrats');
 
     audio.play().catch(() => {

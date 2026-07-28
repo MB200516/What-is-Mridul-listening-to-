@@ -70,17 +70,10 @@
     overflow: hidden;
     border-right: 3px solid #000;
     width: 0;
-    animation: typewriter 4s steps(40) 1s 1 normal both,
-               blinkTextCursor 500ms steps(40) infinite normal;
+    max-width: 95vw;
+    transition: width 4s steps(40, end) 1s;
+    animation: blinkTextCursor 500ms steps(2) infinite normal;
 }
-        @keyframes typewriter {
-        from { width: 0; }
-        to { width: 45%; }
-        }
-          @keyframes typewriterson {
-        from { width: 0; }
-        to { width: 20%; }
-        }
          @keyframes blinkTextCursor {
         from { border-right-color: rgba(255,255,255,0.75); }
         to { border-right-color: transparent; }
@@ -91,13 +84,12 @@
         top: 40%;
         left: 50%;
         transform: translate(-50%, -50%);
-        animation: typewriterson 2s steps(40) 5s 1 normal both,
-               blinkTextCursor 500ms steps(40) infinite normal;
         font-size: 5rem;
         overflow: hidden;
         white-space: nowrap;
-
-
+        width: 0;
+        max-width: 95vw;
+        transition: width 2s steps(40, end) 5s;
        }
        #blast{
             position: fixed;
@@ -132,5 +124,17 @@
     <div id="wr">WRONG</div>
     <div id="wr2">You died</div>
     <img id="blast" src="blast.png" draggable="false">
+
+    <script>
+    const wrEl = document.getElementById('wr');
+    const wr2El = document.getElementById('wr2');
+
+    document.fonts.ready.then(() => {
+        requestAnimationFrame(() => {
+            wrEl.style.width = wrEl.scrollWidth + 'px';
+            wr2El.style.width = wr2El.scrollWidth + 'px';
+        });
+    });
+    </script>
 </body>
 </html>
