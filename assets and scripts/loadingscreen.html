@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Document</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&display=swap" rel="stylesheet">
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html, body {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            min-width: 768px;
+            min-height: 432px;
+        }
+
+        #bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            object-fit: fill;
+            z-index: 0;
+        }
+        #loadingbox {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            width:60vw;
+            height:50vh;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+            border-radius: 25px;
+            border: 5px solid #000;
+       }
+       #loadingtext {
+            font-family: 'Pixelify Sans', sans-serif;
+            position: fixed;
+            top: 18%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2.7rem;
+            color: #000;
+            z-index: 2;
+            white-space: nowrap;
+            overflow: hidden;
+            border-right: 3px solid #fff;
+            width: 0;
+            animation: typewriter 4s steps(40) 1s 1 normal both,
+               blinkTextCursor 500ms steps(40) infinite normal;
+}
+        @keyframes typewriter {
+        from { width: 0; }
+        to { width: 70%; }
+        }
+
+        @keyframes blinkTextCursor {
+        from { border-right-color: rgba(255,255,255,0.75); }
+        to { border-right-color: transparent; }
+       }
+       #buffer {
+          position: fixed;
+    bottom: 8%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 40px;
+    border: 5px solid #000;
+    border-top: 5px solid transparent;
+    border-radius: 50%;
+    z-index: 2;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: translateX(-50%) rotate(360deg); }
+}
+
+
+
+    </style>
+</head>
+<body>
+    <img id="bg" src="background.png"  draggable="false"/>
+    <img id="loadingbox" src="loadingbox.gif" draggable="false"/>
+    <div id="loadingtext">Standby as we rummage through her brainrot...</div>
+    <div id="buffer"></div>
+    <audio id="loadaudio" src="loadscreensound.mp3"  loop></audio>
+    
+    <script>
+    const audio = document.getElementById('loadaudio');
+
+    audio.play().catch(() => {
+        document.body.addEventListener('click', () => audio.play(), { once: true });
+    });
+
+    audio.addEventListener('timeupdate', () => {
+        if (audio.currentTime >= 3) {
+            audio.currentTime = 0;
+            audio.play();
+        }
+    });
+
+    async function goToGuessScreen() {
+        const minWait = new Promise(resolve => setTimeout(resolve, 12000));
+        const fetchOptions = fetch('http://127.0.0.1:3000/api/get-song-options').then(res => res.json());
+
+        try {
+            const [, songData] = await Promise.all([minWait, fetchOptions]);
+            sessionStorage.setItem('songOptions', JSON.stringify(songData));
+        } catch (err) {
+            console.error('Failed to fetch song options:', err);
+            await minWait;
+        }
+
+        window.location.href = 'guesspage.html';
+    }
+
+    goToGuessScreen();
+    </script>
+  
+</body>
+</html>

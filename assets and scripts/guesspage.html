@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jersey+15&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html, body {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            min-width: 768px;
+            min-height: 432px;
+        }
+
+        #bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            object-fit: fill;
+            z-index: 0;
+        }
+        #toptext{
+            font-family: 'Jersey 15', sans-serif;
+            position: fixed;
+            top: 13%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 17rem;
+            color: #BD0B0B;
+            z-index: 2;
+            -webkit-text-stroke: 3px #000;
+        }
+
+        /* ---------- Card grid ---------- */
+        #cardContainer {
+            position: fixed;
+            bottom: 6%;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 26px;
+            z-index: 2;
+        }
+
+        .card {
+            width: 190px;
+            background: #111;
+            cursor: pointer;
+            image-rendering: pixelated;
+
+            border: 4px solid #000;
+            box-shadow:
+                0 0 0 4px #1DB954,
+                6px 6px 0 0 #000;
+            transition: transform 0.12s steps(3), box-shadow 0.12s steps(3);
+        }
+
+        .card:hover {
+            transform: translate(-3px, -3px);
+            box-shadow:
+                0 0 0 4px #1ed760,
+                9px 9px 0 0 #000;
+        }
+
+        .card:active {
+            transform: translate(0, 0);
+            box-shadow:
+                0 0 0 4px #1DB954,
+                3px 3px 0 0 #000;
+        }
+
+        .cover-wrap {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            overflow: hidden;
+            border-bottom: 4px solid #000;
+        }
+
+        .cover-wrap .cover-placeholder {
+            width: 100%;
+            height: 100%;
+            background-color: #2b2b2b;
+            background-image:
+                repeating-conic-gradient(#3a3a3a 0% 25%, #2b2b2b 0% 50%);
+            background-size: 24px 24px;
+            image-rendering: pixelated;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cover-placeholder .note-icon {
+            width: 44px;
+            height: 44px;
+            fill: #6a6a6a;
+        }
+
+        .badge {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            width: 26px;
+            height: 26px;
+            background: #1DB954;
+            border: 3px solid #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.1s steps(2);
+        }
+
+        .card:hover .badge {
+            opacity: 1;
+        }
+
+        .badge svg {
+            width: 14px;
+            height: 14px;
+            fill: #000;
+        }
+
+        .info {
+            font-family: 'Jersey 15', sans-serif;
+            padding: 12px 12px 14px;
+            color: #fff;
+        }
+
+        .info .song-title {
+            font-size: 1.5rem;
+            line-height: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .info .song-artist {
+            margin-top: 4px;
+            font-size: 1.15rem;
+            color: #9a9a9a;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .card.disabled {
+            pointer-events: none;
+            opacity: 0.45;
+        }
+
+        #gimg{
+            position: fixed;
+            top: 34%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 28%;
+            height: auto;
+            z-index: 3;
+        }
+    </style>
+</head>
+<body>
+    <img id="bg" src="background.png" draggable="false">
+    <img id="gimg" src="guessimg.png" draggable="false">
+    <div id="toptext">GUESS!</div>
+
+    <div id="cardContainer"></div>
+
+    <script>
+        function artistNames(song) {
+            return song.artists.map(a => a.name).join(', ');
+        }
+
+        function coverMarkup(song) {
+            const url = song.album.images[0]?.url;
+            if (url) {
+                return `<img src="${url}" alt="${song.name}" style="width:100%;height:100%;object-fit:cover;display:block;">`;
+            }
+            return `
+                <div class="cover-placeholder">
+                    <svg class="note-icon" viewBox="0 0 24 24">
+                        <path d="M9 3v10.55A4 4 0 1 0 11 17V7h6V3H9z"/>
+                    </svg>
+                </div>
+            `;
+        }
+
+        function createCard(song, correctId) {
+            const isCorrect = song.id === correctId;
+            const card = document.createElement('div');
+            card.className = 'card';
+            card.dataset.correct = isCorrect;
+
+            card.innerHTML = `
+                <div class="cover-wrap">
+                    ${coverMarkup(song)}
+                    <div class="badge">
+                        <svg viewBox="0 0 24 24"><path d="M9 16.2l-3.5-3.5L4 14.2l5 5 11-11-1.5-1.5z"/></svg>
+                    </div>
+                </div>
+                <div class="info">
+                    <p class="song-title">${song.name}</p>
+                    <p class="song-artist">${artistNames(song)}</p>
+                </div>
+            `;
+
+            card.addEventListener('click', () => {
+                document.querySelectorAll('.card').forEach(c => c.classList.add('disabled'));
+                window.location.href = isCorrect ? 'correctpage.html' : 'wrongpage.html';
+            });
+
+            return card;
+        }
+
+        function shuffle(array) {
+            const arr = [...array];
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+
+        function renderOptions(data) {
+            const container = document.getElementById('cardContainer');
+            container.innerHTML = '';
+            const allSongs = shuffle([data.correct, ...data.wrongOptions]);
+            allSongs.forEach(song => container.appendChild(createCard(song, data.correct.id)));
+        }
+
+        const stored = sessionStorage.getItem('songOptions');
+        if (stored) {
+            renderOptions(JSON.parse(stored));
+        } else {
+            fetch('http://127.0.0.1:3000/api/get-song-options')
+                .then(res => res.json())
+                .then(renderOptions)
+                .catch(err => console.error('Failed to load song options:', err));
+        }
+    </script>
+</body>
+</html>

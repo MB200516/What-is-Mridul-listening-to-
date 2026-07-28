@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Document</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        html, body {
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            min-width: 768px;
+            min-height: 432px;
+        }
+
+        #bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            object-fit: fill;
+            z-index: 0;
+        }
+
+        #me {
+            position: fixed;
+            top: 43%;
+            transform: translateY(-50%);
+            width: 26vw;
+            max-width: 380px;
+            height: auto;
+            z-index: 1;
+            animation: slideIn 13s ease-out forwards;
+        }
+
+        @keyframes slideIn {
+            from {
+                left: 120%;
+                opacity: 0;
+            }
+            to {
+                left: 34%;
+                opacity: 1;
+            }
+        }
+
+        /* Clickable area over the START rectangle in design.png.
+           Adjust top/left/width/height % to match your button's exact position. */
+        #startBtn {
+            position: fixed;
+            top: 76%;
+            left: 42%;
+            width: 17%;
+            height: 8%;
+            z-index: 3;
+            cursor: pointer;
+            background: transparent;
+            border: none;
+        }
+    </style>
+</head>
+<body>
+    <img id="bg" src="design.png"  draggable="false"/>
+    <img id="me" src="me.png"  draggable="false"/>
+    <button id="startBtn" aria-label="Start"></button>
+
+    <audio id="startaudio" src="pink-pantheress-illegal-ringtone-adams_ARbaRwH6.mp3" autoplay loop></audio>
+    <script>
+    window.addEventListener('load', () => {
+        const music = document.getElementById('startaudio');
+        music.play().catch(() => {
+            document.addEventListener('click', () => music.play(), { once: true });
+        });
+    });
+
+    document.getElementById('startBtn').addEventListener('click', () => {
+        window.location.href = 'loadingscreen.html';
+    });
+    </script>
+</body>
+</html>
